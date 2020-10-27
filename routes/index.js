@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var request = require('sync-request');
+
 
 var cityList = [
   {name: "Paris", desc: "Couvert", img:"/images/picto-1.png", temp_min:2, temp_max: 19},
@@ -17,15 +19,12 @@ router.get('/weather', function(req, res, next){
 })
 
 router.post('/add-city', function(req, res, next){
-
   var alreadyExist = false;
-
   for(var i=0; i<cityList.length;i++){
     if(req.body.newcity.toLowerCase() == cityList[i].name.toLowerCase() ){
       alreadyExist = true;
     }
   }
-
   if(alreadyExist == false){
     cityList.push({
       name: req.body.newcity,
@@ -35,7 +34,8 @@ router.post('/add-city', function(req, res, next){
       temp_max: 19
     })
   }
-  
+  var result = request("GET", "api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}");
+
 
   res.render('weather', {cityList})
 })
